@@ -49,12 +49,24 @@ jsonfile.readFile(file, function (err, obj) {
         delete parseItem['objectId'];
       }
       if (parseField === 'createdAt') {
-        parseItem['created_at'] = { '$date': parseItem['createdAt'] }
+        parseItem['_created_at'] = { '$date': parseItem['createdAt'] }
         delete parseItem['createdAt'];
       }
       if (parseField === 'updatedAt') {
-        parseItem['updated_at'] = { '$date': parseItem['updatedAt'] }
+        parseItem['_updated_at'] = { '$date': parseItem['updatedAt'] }
         delete parseItem['updatedAt'];
+      }
+      if (parseField === 'ACL') {
+        parseItem['_acl'] = parseItem['updatedAt'];
+        delete parseItem['ACL'];
+      }
+      if (parseField === '_w') {
+        parseItem['_wperm'] = parseItem['_w'];
+        delete parseItem['_w'];
+      }
+      if (parseField === '_r') {
+        parseItem['_rperm'] = parseItem['_r'];
+        delete parseItem['_r'];
       }
       var value = parseItem[parseField]
       if (value != null && typeof value === 'object' && value['__type'] == 'Pointer') {
