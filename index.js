@@ -57,7 +57,7 @@ jsonfile.readFile(file, function (err, obj) {
         delete parseItem['updatedAt'];
       }
       if (parseField === 'ACL') {
-        parseItem['_acl'] = parseItem['updatedAt'];
+        parseItem['_acl'] = parseItem['ACL'];
         delete parseItem['ACL'];
       }
       if (parseField === '_w') {
@@ -67,6 +67,15 @@ jsonfile.readFile(file, function (err, obj) {
       if (parseField === '_r') {
         parseItem['_rperm'] = parseItem['_r'];
         delete parseItem['_r'];
+      }
+      if (parseItem['username']){
+        //this parseItem is a _User class
+        var objectId = parseItem['_id'];
+        parseItem['_acl'] = {};
+        parseItem['_acl'][objectId] = {"w" : true,"r" : true};
+        parseItem['_acl']["*"] = {"r" : true};
+        parseItem['_wperm'] = [parseItem['_id']];
+        parseItem['_rperm'] = ["*",parseItem['_id']];
       }
       if(parseField === 'authData' && parseItem[parseField]){
         var authData = parseItem[parseField];
