@@ -79,16 +79,26 @@ jsonfile.readFile(file, function (err, obj) {
             //parse-server auth named wechat rather than weixin
             provider = 'wechat';
             //only fit my needs, for your use should get rid of these lines
-            fixedProviderAuthData['id'] = parseItem['openIds']['app']['openid'];
-            parseItem['openIds']['unionid'] = fixedProviderAuthData['openid'];
+            if(parseItem['openIds'] && parseItem['openIds']['app']){
+              fixedProviderAuthData['id'] = parseItem['openIds']['app']['openid'];
+              parseItem['openIds']['unionid'] = fixedProviderAuthData['openid'];
+              parseItem['_auth_data_wechat'] = fixedProviderAuthData;
+            }else{
+            }
           }
           if(provider == 'weibo'){
             fixedProviderAuthData['id'] = fixedProviderAuthData['uid'];
+            parseItem['_auth_data_weibo'] = fixedProviderAuthData;
           }
           if(provider == 'qq'){
             fixedProviderAuthData['id'] = fixedProviderAuthData['openid'];
+            parseItem['_auth_data_qq'] = fixedProviderAuthData;
           }
-          parseItem[`_auth_data_${provider}`] = fixedProviderAuthData;
+          if(provider == 'facebook'){
+            fixedProviderAuthData['id'] = fixedProviderAuthData['uid'];
+            parseItem['_auth_data_facebook'] = fixedProviderAuthData;
+          }
+
         }, this);
         delete parseItem['authData'];
       }
