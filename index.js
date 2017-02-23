@@ -68,11 +68,36 @@ jsonfile.readFile(file, function (err, obj) {
         parseItem['_rperm'] = parseItem['_r'];
         delete parseItem['_r'];
       }
+      if(parseField === 'authData'){
+        var authData = parseItem[parseField];
+        var providers = Object.keys(authData);
+        providers.forEach(function(provider) {
+          //change openid or uid to id
+          var fixedProviderAuthData = authData[provider];
+
+          if(provider == 'weixin'){
+            //parse-server auth named wechat rather than weixin
+            provider = 'wechat';
+            //only fit my needs, for your use should get rid of these lines
+            fixedProviderAuthData['id'] = parseItem['openIds']['app']['openid'];
+            parseItem['openIds']['unionid'] = fixedProviderAuthData['openid'];
+          }
+          if(provider == 'weibo'){
+            fixedProviderAuthData['id'] = fixedProviderAuthData['uid'];
+          }
+          if(provider == 'qq'){
+            fixedProviderAuthData['id'] = fixedProviderAuthData['openid'];
+          }
+          parseItem[`_auth_data_${provider}`] = fixedProviderAuthData;
+        }, this);
+        delete parseItem['authData'];
+      }
       var value = parseItem[parseField]
       if (value != null && typeof value === 'object' && value['__type'] == 'Pointer') {
           parseItem['_p_' + parseField] = value['className'] + '$' + value['objectId']
           delete parseItem[parseField]
       }
+      
     }
     newArray.push(parseItem)
   }
