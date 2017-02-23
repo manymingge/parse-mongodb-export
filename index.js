@@ -68,7 +68,7 @@ jsonfile.readFile(file, function (err, obj) {
         parseItem['_rperm'] = parseItem['_r'];
         delete parseItem['_r'];
       }
-      if(parseField === 'authData'){
+      if(parseField === 'authData' && parseItem[parseField]){
         var authData = parseItem[parseField];
         var providers = Object.keys(authData);
         providers.forEach(function(provider) {
